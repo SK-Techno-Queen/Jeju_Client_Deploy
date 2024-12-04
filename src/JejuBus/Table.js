@@ -82,7 +82,7 @@ const Table = () => {
     }, 1000);
 
     return () => clearInterval(interval); // 컴포넌트가 언마운트될 때 interval 정리
-  }, [coordinateHistory, lastUpdateTime]);
+  }, [coordinateHistory, lastUpdateTime, removeStaleBuses]);
 
   return (
     <div className="data-panel">

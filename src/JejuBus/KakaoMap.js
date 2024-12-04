@@ -182,7 +182,7 @@ const KakaoMap = () => {
   
     // 상태 갱신: 새로운 마커 상태로 변경
     setMarkers(newMarkers);
-  }, [buses, map]); // buses와 map이 변경될 때만 실행
+  }, [buses, map, markers]); // buses와 map이 변경될 때만 실행
   
   
 
@@ -281,7 +281,7 @@ const KakaoMap = () => {
     return () => {
       newMarkers.forEach(marker => marker.setMap(null));
     };
-  }, [spots, map, activeInfoWindow]);
+  }, [spots, map, activeInfoWindow, spotMarkers]);
 
   // 관광지 데이터를 한 번만 가져오기
   useEffect(() => {

@@ -16,7 +16,7 @@ const KakaoMap = () => {
   // 버스 데이터를 가져오는 함수
   const fetchBusData = async () => {
     try {
-      const response = await fetch(`${process.env.REACT_APP_SERVER}/bus`);
+      const response = await fetch(`${process.env.REACT_APP_LOCAL}/bus`);
       const data = await response.json();
 
       const filteredBuses = data.map(bus => ({
@@ -42,7 +42,7 @@ const KakaoMap = () => {
   // 관광지 데이터를 가져오는 함수
   const fetchSpotData = async () => {
     try {
-      const response = await fetch(`${process.env.REACT_APP_SERVER}/spot`);
+      const response = await fetch(`${process.env.REACT_APP_LOCAL}/spot`);
       const data = await response.json();
       setSpots(data.items || []);
     } catch (error) {
@@ -120,10 +120,10 @@ const KakaoMap = () => {
 
             // 애니메이션이 진행 중인지 확인
             if (marker.animationInProgress) {
-              console.log(`${bus.plateNo}: 애니메이션이 이미 진행 중입니다.`);
+           //   console.log(`${bus.plateNo}: 애니메이션이 이미 진행 중입니다.`);
               return; // 이미 애니메이션이 진행 중이면 반복하지 않음
             } else {
-              console.log(`${bus.plateNo}: 애니메이션 시작`);
+          //    console.log(`${bus.plateNo}: 애니메이션 시작`);
 
               marker.animationInProgress = true; // 애니메이션 시작 표시
             }
@@ -137,14 +137,14 @@ const KakaoMap = () => {
           // 이동 중이면 이미지 변경
           marker.setImage(busMarkerImageMoving); // 이동 중 빨간색
 
-          console.log(`${bus.plateNo}: 애니메이션 진행 중, 현재 위치 - lat: ${currentLat}, lng: ${currentLng}`);
+        //  console.log(`${bus.plateNo}: 애니메이션 진행 중, 현재 위치 - lat: ${currentLat}, lng: ${currentLng}`);
   
           // 좌표 차이가 일정 기준 이하로 작아지면 애니메이션 종료
           if (Math.abs(endLat - currentLat) < animationThreshold && Math.abs(endLng - currentLng) < animationThreshold) {
             marker.setPosition(new kakao.maps.LatLng(endLat, endLng)); // 정확한 최종 위치 설정
             marker.setImage(busMarkerImage); // 이동 끝나면 파란색으로
             marker.animationInProgress = false; // 애니메이션 종료 표시
-            console.log(`${bus.plateNo}: 애니메이션 종료`);
+         //   console.log(`${bus.plateNo}: 애니메이션 종료`);
             return; // 애니메이션 종료 후 더 이상 호출되지 않음
           }
             // 애니메이션이 종료되지 않았을 경우 계속해서 애니메이션을 진행
@@ -182,15 +182,16 @@ const KakaoMap = () => {
   
     // 상태 갱신: 새로운 마커 상태로 변경
     setMarkers(newMarkers);
-  }, [buses, map, markers]); // buses와 map이 변경될 때만 실행
-  
+
+    addMarkerEvents(newMarkers, buses, map);
+  }, [buses, map]); // buses와 map이 변경될 때만 실행
   
 
   // 인포윈도우 관리 (버스 마커 클릭 시)
   const activeInfoWindowRef = useRef(null);
 
-  useEffect(() => {
-    if (!map || markers.length === 0) return;
+  const addMarkerEvents = (inputMarkers, inputBuses, inputMap) => {
+    if (!inputMap || inputMarkers.length === 0) return;
 
     const { kakao } = window;
     const infowindow = new kakao.maps.InfoWindow({
@@ -198,8 +199,8 @@ const KakaoMap = () => {
       zIndex: 10,
     });
 
-    markers.forEach(marker => {
-      const bus = buses.find(b => b.plateNo === marker.key);
+    inputMarkers.forEach(marker => {
+      const bus = inputBuses.find(b => b.plateNo === marker.key);
       if (!bus) return;
 
       const busInfoContent = `
@@ -228,7 +229,7 @@ const KakaoMap = () => {
         });
       });
     });
-  }, [map, markers, buses]); // 의존성 배열에서 activeInfoWindow 제거
+  }; 
 
   // 관광지 마커를 생성
   useEffect(() => {
@@ -281,7 +282,7 @@ const KakaoMap = () => {
     return () => {
       newMarkers.forEach(marker => marker.setMap(null));
     };
-  }, [spots, map, activeInfoWindow, spotMarkers]);
+  }, [spots, map, activeInfoWindow]);
 
   // 관광지 데이터를 한 번만 가져오기
   useEffect(() => {

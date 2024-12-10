@@ -14,8 +14,10 @@ const KakaoMap = () => {
   // 버스 데이터를 가져오는 함수
   const fetchBusData = async () => {
     try {
-      const response = await fetch(`${process.env.REACT_APP_LOCAL}/bus`);
+      const response = await fetch(`${process.env.REACT_APP_SERVER}/bus`);
       const data = await response.json();
+
+      console.log('받은 버스 데이터:', data);  // 데이터를 콘솔에 찍어서 확인
 
       const filteredBuses = data.map(bus => ({
         plateNo: bus.plateNo,
@@ -40,7 +42,7 @@ const KakaoMap = () => {
   // 관광지 데이터를 가져오는 함수
   const fetchSpotData = async () => {
     try {
-      const response = await fetch(`${process.env.REACT_APP_LOCAL}/spot`);
+      const response = await fetch(`${process.env.REACT_APP_SERVER}/spot`);
       const data = await response.json();
       setSpots(data.items || []);
     } catch (error) {
